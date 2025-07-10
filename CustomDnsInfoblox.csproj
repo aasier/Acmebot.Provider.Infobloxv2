@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <Nullable>enable</Nullable>
+    <!-- NO OutputType for isolated worker -->
   </PropertyGroup>
 
   <ItemGroup>
