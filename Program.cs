@@ -1,10 +1,12 @@
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
     .ConfigureServices(services =>
     {
-        // Aquí puedes registrar dependencias si lo necesitas
+        services.AddHttpClient(); // Necesario para IHttpClientFactory
+        services.AddSingleton<InfobloxClient>();
     })
     .Build();
 
