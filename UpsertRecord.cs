@@ -9,23 +9,26 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
 
-public class UpsertRecord
+namespace Acmebot.Provider.Infobloxv2
 {
-    private readonly InfobloxClient _client;
-
-    public UpsertRecord(InfobloxClient client) => _client = client;
-
-    [Function("UpsertRecord")]
-    public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "zones/{zoneId}/records/{recordName}")] HttpRequestData req,
-        string zoneId, string recordName)
+    public class UpsertRecord
     {
-        var data = await JsonSerializer.DeserializeAsync<DnsRequest>(req.Body);
-        if (data?.Values == null)
-            return req.CreateResponse(HttpStatusCode.BadRequest);
+        private readonly InfobloxClient _client;
 
-        var zone = zoneId.Replace("_", ".");
-        await _client.UpsertTxtRecordAsync(zone, recordName, data.Values.ToList(), data.Ttl);
-        return req.CreateResponse(HttpStatusCode.OK);
+        public UpsertRecord(InfobloxClient client) => _client = client;
+
+        [Function("UpsertRecord")]
+        public async Task<HttpResponseData> Run(
+            [HttpTrigger(AuthorizationLevel.Function, "put", Route = "zones/{zoneId}/records/{recordName}")] HttpRequestData req,
+            string zoneId, string recordName)
+        {
+            var data = await JsonSerializer.DeserializeAsync<DnsRequest>(req.Body);
+            if (data?.Values == null)
+                return req.CreateResponse(HttpStatusCode.BadRequest);
+
+            var zone = zoneId.Replace("_", ".");
+            await _client.UpsertTxtRecordAsync(zone, recordName, data.Values.ToList(), data.Ttl);
+            return req.CreateResponse(HttpStatusCode.OK);
+        }
     }
 }

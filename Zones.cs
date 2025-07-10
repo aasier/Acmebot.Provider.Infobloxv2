@@ -8,25 +8,28 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
 
-public class Zones
+namespace Acmebot.Provider.Infobloxv2
 {
-    private readonly InfobloxClient _client;
-
-    public Zones(InfobloxClient client) => _client = client;
-
-    [Function("Zones")]
-    public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "zones")] HttpRequestData req)
+    public class Zones
     {
-        var zones = await _client.GetZonesAsync();
-        var result = zones.Select(z => new {
-            id = z.fqdn.ToString().Replace(".", "_").TrimEnd('.'),
-            name = z.fqdn.ToString().TrimEnd('.'),
-            nameServers = z.name_servers ?? Array.Empty<string>()
-        });
+        private readonly InfobloxClient _client;
 
-        var res = req.CreateResponse(HttpStatusCode.OK);
-        await res.WriteAsJsonAsync(result);
-        return res;
+        public Zones(InfobloxClient client) => _client = client;
+
+        [Function("Zones")]
+        public async Task<HttpResponseData> Run(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "zones")] HttpRequestData req)
+        {
+            var zones = await _client.GetZonesAsync();
+            var result = zones.Select(z => new {
+                id = z.fqdn.ToString().Replace(".", "_").TrimEnd('.'),
+                name = z.fqdn.ToString().TrimEnd('.'),
+                nameServers = z.name_servers ?? Array.Empty<string>()
+            });
+
+            var res = req.CreateResponse(HttpStatusCode.OK);
+            await res.WriteAsJsonAsync(result);
+            return res;
+        }
     }
 }

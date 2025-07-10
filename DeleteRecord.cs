@@ -7,18 +7,21 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 
-public class DeleteRecord
+namespace Acmebot.Provider.Infobloxv2
 {
-    private readonly InfobloxClient _client;
-
-    public DeleteRecord(InfobloxClient client) => _client = client;
-
-    [Function("DeleteRecord")]
-    public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "zones/{zoneId}/records/{recordName}")] HttpRequestData req,
-        string zoneId, string recordName)
+    public class DeleteRecord
     {
-        await _client.DeleteTxtRecordsAsync(recordName);
-        return req.CreateResponse(HttpStatusCode.OK);
+        private readonly InfobloxClient _client;
+
+        public DeleteRecord(InfobloxClient client) => _client = client;
+
+        [Function("DeleteRecord")]
+        public async Task<HttpResponseData> Run(
+            [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "zones/{zoneId}/records/{recordName}")] HttpRequestData req,
+            string zoneId, string recordName)
+        {
+            await _client.DeleteTxtRecordsAsync(recordName);
+            return req.CreateResponse(HttpStatusCode.OK);
+        }
     }
 }

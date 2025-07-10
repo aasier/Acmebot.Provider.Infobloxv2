@@ -81,6 +81,33 @@
     ]
   },
   {
+    "name": "Health",
+    "scriptFile": "CustomDnsInfoblox.dll",
+    "entryPoint": "Health.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "req",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Function",
+        "methods": [
+          "get"
+        ],
+        "route": "health",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
     "name": "UpsertRecord",
     "scriptFile": "CustomDnsInfoblox.dll",
     "entryPoint": "UpsertRecord.Run",
