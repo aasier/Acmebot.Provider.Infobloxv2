@@ -1,0 +1,10 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "INFOBLOX_WAPI_URL": "https://68.221.132.172/wapi/v2.11",
+    "INFOBLOX_USERNAME": "admin",
+    "INFOBLOX_PASSWORD": "s6vv8WCtt^AK4G^DLn"
+  }
+}
