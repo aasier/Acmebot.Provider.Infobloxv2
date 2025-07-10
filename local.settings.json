@@ -1,6 +1,7 @@
 {
   "IsEncrypted": false,
   "Values": {
+    "FUNCTIONS_INPROC_NET8_ENABLED": 1,
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "INFOBLOX_WAPI_URL": "https://infoblox.example.com/wapi/v2.11",
