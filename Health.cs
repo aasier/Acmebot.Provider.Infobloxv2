@@ -23,10 +23,10 @@ namespace Acmebot.Provider.Infobloxv2
                 await res.WriteStringAsync("Healthy: Connected to Infoblox WAPI");
                 return res;
             }
-            catch
+            catch (Exception ex)
             {
                 var res = req.CreateResponse(HttpStatusCode.ServiceUnavailable);
-                await res.WriteStringAsync("Unhealthy: Cannot connect to Infoblox WAPI");
+                await res.WriteStringAsync($"Unhealthy: {ex.Message}");
                 return res;
             }
         }
