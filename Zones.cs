@@ -22,9 +22,11 @@ namespace Acmebot.Provider.Infobloxv2
         {
             var zones = await _client.GetZonesAsync();
             var result = zones.Select(z => new {
-                id = z.fqdn.ToString().Replace(".", "_").TrimEnd('.'),
-                name = z.fqdn.ToString().TrimEnd('.'),
-                nameServers = z.name_servers ?? Array.Empty<string>()
+                id = z.GetProperty("fqdn").GetString().Replace(".", "_").TrimEnd('.'),
+                name = z.GetProperty("fqdn").GetString().TrimEnd('.'),
+                nameServers = z.TryGetProperty("name_servers", out var ns) && ns.ValueKind == System.Text.Json.JsonValueKind.Array
+                    ? ns.EnumerateArray().Select(e => e.GetString()).ToArray()
+                    : Array.Empty<string>()
             });
 
             var res = req.CreateResponse(HttpStatusCode.OK);
