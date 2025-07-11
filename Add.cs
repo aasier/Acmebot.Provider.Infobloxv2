@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
 
 namespace Acmebot.Provider.Infobloxv2
 {
