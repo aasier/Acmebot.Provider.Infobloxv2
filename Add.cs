@@ -21,14 +21,16 @@ namespace Acmebot.Provider.Infobloxv2
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "add")] HttpRequestData req)
         {
             var data = await JsonSerializer.DeserializeAsync<DnsRequest>(req.Body);
-            if (data is null || data.Value is null)
+            if (data?.Values == null || data.Values.Length == 0)
                 return req.CreateResponse(HttpStatusCode.BadRequest);
 
-            var zone = await _client.FindZoneAsync(data.Name);
+            // You may want to pass the record name in the body or as a parameter
+            var recordName = data.Values[0];
+            var zone = await _client.FindZoneAsync(recordName);
             if (zone is null)
                 return req.CreateResponse(HttpStatusCode.NotFound);
 
-            await _client.UpsertTxtRecordAsync(zone, data.Name, new List<string> { data.Value }, data.Ttl);
+            await _client.UpsertTxtRecordAsync(zone, recordName, data.Values.ToList(), data.Ttl);
             return req.CreateResponse(HttpStatusCode.OK);
         }
     }

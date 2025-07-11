@@ -21,10 +21,12 @@ namespace Acmebot.Provider.Infobloxv2
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "delete")] HttpRequestData req)
         {
             var data = await JsonSerializer.DeserializeAsync<DnsRequest>(req.Body);
-            if (data is null)
+            if (data?.Values == null || data.Values.Length == 0)
                 return req.CreateResponse(HttpStatusCode.BadRequest);
 
-            await _client.DeleteTxtRecordsAsync(data.Name);
+            // Use the first value as the record name to delete
+            var recordName = data.Values[0];
+            await _client.DeleteTxtRecordsAsync(recordName);
             return req.CreateResponse(HttpStatusCode.OK);
         }
     }
