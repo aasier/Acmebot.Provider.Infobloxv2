@@ -6,7 +6,12 @@ var host = new HostBuilder()
     .ConfigureServices(services =>
     {
         services.AddHttpClient(); // Necesario para IHttpClientFactory
-        services.AddSingleton<InfobloxClient>();
+        services.AddSingleton<InfobloxClient>(sp =>
+            new InfobloxClient(
+                sp.GetRequiredService<IConfiguration>(),
+                sp.GetRequiredService<IHttpClientFactory>()
+            )
+        );
     })
     .Build();
 
