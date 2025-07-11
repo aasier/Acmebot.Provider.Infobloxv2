@@ -65,8 +65,12 @@ public class InfobloxClient
         var records = await GetTxtRecordsAsync(name);
         foreach (var rec in records)
         {
-            var href = rec._ref.ToString();
-            await _http.DeleteAsync($"{_baseUrl}/{href}");
+            // Use JsonElement API to get _ref property
+            var href = ((JsonElement)rec).GetProperty("_ref").GetString();
+            if (!string.IsNullOrEmpty(href))
+            {
+                await _http.DeleteAsync($"{_baseUrl}/{href}");
+            }
         }
     }
 
