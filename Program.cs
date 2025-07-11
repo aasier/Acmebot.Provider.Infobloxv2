@@ -7,7 +7,12 @@ var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
     .ConfigureServices(services =>
     {
-        services.AddHttpClient(); // Necesario para IHttpClientFactory
+        services.AddHttpClient("Infoblox")
+            .ConfigurePrimaryHttpMessageHandler(() =>
+                new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                });
         services.AddSingleton<InfobloxClient>(sp =>
             new InfobloxClient(
                 sp.GetRequiredService<IConfiguration>(),

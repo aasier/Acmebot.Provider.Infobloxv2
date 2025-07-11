@@ -16,7 +16,7 @@ public class InfobloxClient
 
     public InfobloxClient(IConfiguration config, IHttpClientFactory httpFactory)
     {
-        _http = httpFactory.CreateClient();
+        _http = httpFactory.CreateClient("Infoblox");
         _baseUrl = config["INFOBLOX_WAPI_URL"]!;
         var username = config["INFOBLOX_USERNAME"]!;
         var password = config["INFOBLOX_PASSWORD"]!;
