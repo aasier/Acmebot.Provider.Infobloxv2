@@ -79,8 +79,8 @@ public class InfobloxClient
             var data = new Dictionary<string, object> {
                 { "name", name },
                 { "text", val },
-                { "ttl", ttl },
-                { "zone", zone }
+                { "ttl", ttl }
+                // { "view", "default" } // Descomenta si tu Infoblox usa views
             };
 
             var content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
