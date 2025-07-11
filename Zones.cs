@@ -24,7 +24,7 @@ namespace Acmebot.Provider.Infobloxv2
             var result = zones.Select(z => new {
                 id = z.GetProperty("fqdn").GetString().Replace(".", "_").TrimEnd('.'),
                 name = z.GetProperty("fqdn").GetString().TrimEnd('.'),
-                nameServers = z.TryGetProperty("name_servers", out var ns) && ns.ValueKind == System.Text.Json.JsonValueKind.Array
+                nameServers = z.TryGetProperty("name_servers", out System.Text.Json.JsonElement ns) && ns.ValueKind == System.Text.Json.JsonValueKind.Array
                     ? ns.EnumerateArray().Select(e => e.GetString()).ToArray()
                     : Array.Empty<string>()
             });
