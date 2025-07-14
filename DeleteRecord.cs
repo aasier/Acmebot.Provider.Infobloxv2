@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 
-namespace Acmebot.Provider.Infobloxv2
+namespace Acmebot.Provider.Infoblox
 {
     public class DeleteRecord
     {

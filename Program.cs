@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 
-namespace YourNamespace
+namespace Acmebot.Provider.Infoblox
 {
     /// <summary>
     /// Entry point for Azure Functions Isolated Worker. Configures DI and Infoblox client.

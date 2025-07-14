@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
 
-namespace TuNombreDeEspacio
+namespace Acmebot.Provider.Infoblox
 {
     /// <summary>
     /// Cliente para interactuar con Infoblox WAPI: zonas y registros TXT.

@@ -4,7 +4,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using System.Threading.Tasks;
 
-namespace Acmebot.Provider.Infobloxv2
+namespace Acmebot.Provider.Infoblox
 {
     public class Health
     {
