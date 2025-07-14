@@ -3,23 +3,35 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 
-var host = new HostBuilder()
-    .ConfigureFunctionsWorkerDefaults()
-    .ConfigureServices(services =>
+namespace YourNamespace
+{
+    /// <summary>
+    /// Entry point for Azure Functions Isolated Worker. Configures DI and Infoblox client.
+    /// </summary>
+    public class Program
     {
-        services.AddHttpClient("Infoblox")
-            .ConfigurePrimaryHttpMessageHandler(() =>
-                new HttpClientHandler
+        public static void Main()
+        {
+            var host = new HostBuilder()
+                .ConfigureFunctionsWorkerDefaults()
+                .ConfigureServices(services =>
                 {
-                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-                });
-        services.AddSingleton<InfobloxClient>(sp =>
-            new InfobloxClient(
-                sp.GetRequiredService<IConfiguration>(),
-                sp.GetRequiredService<IHttpClientFactory>()
-            )
-        );
-    })
-    .Build();
+                    services.AddHttpClient("Infoblox")
+                        .ConfigurePrimaryHttpMessageHandler(() =>
+                            new HttpClientHandler
+                            {
+                                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                            });
+                    services.AddSingleton<InfobloxClient>(sp =>
+                        new InfobloxClient(
+                            sp.GetRequiredService<IConfiguration>(),
+                            sp.GetRequiredService<IHttpClientFactory>()
+                        )
+                    );
+                })
+                .Build();
 
-host.Run();
+            host.Run();
+        }
+    }
+}

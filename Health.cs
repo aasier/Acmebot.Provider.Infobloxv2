@@ -12,6 +12,9 @@ namespace Acmebot.Provider.Infobloxv2
 
         public Health(InfobloxClient client) => _client = client;
 
+        /// <summary>
+        /// Azure Function: Health check, verifica conectividad con Infoblox.
+        /// </summary>
         [Function("Health")]
         public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "health")] HttpRequestData req)

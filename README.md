@@ -2,16 +2,26 @@
 
 ## Descripción
 
-Azure Function App que implementa una API Custom DNS compatible con KeyVault-Acmebot, usando Infoblox WAPI como backend DNS. Permite gestionar zonas y registros DNS mediante los endpoints requeridos por KeyVault-Acmebot.
+Azure Function App que expone una API DNS compatible con KeyVault-Acmebot, usando Infoblox WAPI como backend. Permite gestionar zonas y registros TXT vía HTTP, facilitando la automatización de validaciones ACME y otras integraciones.
 
 ---
 
-## Requisitos
+## Arquitectura
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-- [Azure Functions Core Tools v4](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local)
-- [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
-- Acceso y credenciales para la WAPI de Infoblox
+- **Lenguaje:** C# (.NET 8, Azure Functions Isolated Worker)
+- **Backend DNS:** Infoblox WAPI
+- **Endpoints:** HTTP REST compatibles con KeyVault-Acmebot
+- **Despliegue:** Azure Function App (Windows)
+
+---
+
+## Dependencias
+
+- .NET 8 SDK
+- Azure Functions Core Tools v4
+- Azure CLI
+- System.Text.Json >= 9.0.7
+- Microsoft.Azure.Functions.Worker >= 2.0.0
 
 ---
 
@@ -22,7 +32,7 @@ Azure Function App que implementa una API Custom DNS compatible con KeyVault-Acm
    git clone <url-del-repositorio>
    cd <carpeta-del-proyecto>
    ```
-2. Modifica `local.settings.json` con tus credenciales y URL de Infoblox:
+2. Modifica `local.settings.json`:
    ```json
    {
      "IsEncrypted": false,
@@ -35,52 +45,36 @@ Azure Function App que implementa una API Custom DNS compatible con KeyVault-Acm
      }
    }
    ```
-3. Compila y ejecuta localmente:
+3. Compila y ejecuta:
    ```bash
    dotnet build
    func start
    ```
-   La función estará disponible en: http://localhost:7071/api
+   Accede a la API en: http://localhost:7071/api
 
 ---
 
-## Despliegue en Azure Function App (CLI)
+## Despliegue en Azure (CLI)
 
-### 1. Compila y publica el proyecto
-```bash
-dotnet publish -c Release -o ./publish
-```
-
-### 2. Crea los recursos en Azure
-```bash
-az group create --name <resource-group> --location <region>
-az storage account create --name <storage-account> --location <region> --resource-group <resource-group> --sku Standard_LRS
-az appservice plan create --name <app-service-plan> --resource-group <resource-group> --sku S1 --is-linux false
-```
-
-### 3. Crea la Function App
-```bash
-az functionapp create \
-  --resource-group <resource-group> \
-  --name <functionapp-name> \
-  --plan <app-service-plan> \
-  --runtime dotnet \
-  --functions-version 4 \
-  --storage-account <storage-account>
-```
-
-### 4. Publica el proyecto en Azure
-```bash
-func azure functionapp publish <functionapp-name>
-```
-
-### 5. Configura las variables de entorno en Azure
-```bash
-az functionapp config appsettings set --name <functionapp-name> --resource-group <resource-group> --settings \
-INFOBLOX_WAPI_URL="https://infoblox.example.com/wapi/v2.11" \
-INFOBLOX_USERNAME="admin" \
-INFOBLOX_PASSWORD="yourpassword"
-```
+1. Compila y publica:
+   ```bash
+   dotnet publish -c Release -o ./publish
+   ```
+2. Crea recursos:
+   ```cmd
+   az group create --name <resource-group> --location <region>
+   az storage account create --name <storage-account> --location <region> --resource-group <resource-group> --sku Standard_LRS
+   az appservice plan create --name <app-service-plan> --resource-group <resource-group> --sku S1 --is-linux false
+   az functionapp create --resource-group <resource-group> --name <functionapp-name> --plan <app-service-plan> --runtime dotnet --functions-version 4 --storage-account <storage-account>
+   ```
+3. Publica el proyecto:
+   ```bash
+   func azure functionapp publish <functionapp-name>
+   ```
+4. Configura variables de entorno:
+   ```cmd
+   az functionapp config appsettings set --name <functionapp-name> --resource-group <resource-group> --settings INFOBLOX_WAPI_URL="https://infoblox.example.com/wapi/v2.11" INFOBLOX_USERNAME="admin" INFOBLOX_PASSWORD="yourpassword"
+   ```
 
 ---
 
@@ -96,24 +90,28 @@ INFOBLOX_PASSWORD="yourpassword"
 
 ---
 
-## Ejemplo de request para crear un registro TXT
+## Ejemplo de uso
 
-```http
-PUT /zones/example_com/records/_acme-challenge.example.com
-Content-Type: application/json
+### Crear registro TXT
+```sh
+curl -X PUT "http://localhost:7071/api/zones/example_com/records/_acme-challenge.example.com" \
+  -H "Content-Type: application/json" \
+  -d '{"type": "TXT", "ttl": 60, "values": ["xxxxxx", "yyyyyy"]}'
+```
 
-{
-  "type": "TXT",
-  "ttl": 60,
-  "values": ["xxxxxx", "yyyyyy"]
-}
+### Eliminar registro TXT
+```sh
+curl -X DELETE "http://localhost:7071/api/zones/example_com/records/_acme-challenge.example.com"
+```
+
+### Usar clave de función (Azure)
+```sh
+curl -X GET "https://<functionapp-name>.azurewebsites.net/api/zones" -H "x-functions-key: <tu-clave>"
 ```
 
 ---
 
 ## Configuración para KeyVault-Acmebot
-
-En KeyVault-Acmebot, configura el proveedor DNS así:
 
 ```json
 {
@@ -124,11 +122,26 @@ En KeyVault-Acmebot, configura el proveedor DNS así:
 
 ---
 
-## Notas importantes
+## Seguridad
 
 - La autenticación contra Infoblox se realiza mediante Basic Auth.
-- Asegúrate que la Function App tenga acceso a la red donde esté Infoblox.
-- Usa HTTPS para seguridad.
-- Puedes testear con Postman o curl usando las URLs y métodos descritos.
-- La función está preparada para correr en Azure Functions v4 con .NET 8 en plan Windows.
+- Protege los endpoints con clave de función (`x-functions-key`) o Azure AD si lo requieres.
+- Usa HTTPS en producción.
+- Limita el acceso de red de la Function App solo a Infoblox y clientes autorizados.
+
+---
+
+## Pruebas
+
+- Usa curl, Postman o cualquier cliente HTTP para probar los endpoints.
+- Ejemplos incluidos arriba.
+- Verifica los logs en Azure Portal o localmente para depuración.
+
+---
+
+## Soporte y mantenimiento
+
+- Actualiza dependencias regularmente (`dotnet list package --outdated`).
+- Revisa alertas de seguridad en los paquetes NuGet.
+- Para dudas o incidencias, abre un issue en el repositorio.
 

@@ -17,6 +17,9 @@ namespace Acmebot.Provider.Infobloxv2
 
         public Add(InfobloxClient client) => _client = client;
 
+        /// <summary>
+        /// Azure Function: Añade registro TXT (KeyVault-Acmebot).
+        /// </summary>
         [Function("Add")]
         public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "add")] HttpRequestData req)

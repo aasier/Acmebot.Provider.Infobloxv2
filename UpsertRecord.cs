@@ -17,6 +17,9 @@ namespace Acmebot.Provider.Infobloxv2
 
         public UpsertRecord(InfobloxClient client) => _client = client;
 
+        /// <summary>
+        /// Azure Function: Crea o actualiza registro TXT en Infoblox.
+        /// </summary>
         [Function("UpsertRecord")]
         public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "put", Route = "zones/{zoneId}/records/{recordName}")] HttpRequestData req,

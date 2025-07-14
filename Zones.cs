@@ -16,6 +16,9 @@ namespace Acmebot.Provider.Infobloxv2
 
         public Zones(InfobloxClient client) => _client = client;
 
+        /// <summary>
+        /// Azure Function: Lista zonas DNS desde Infoblox.
+        /// </summary>
         [Function("Zones")]
         public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "zones")] HttpRequestData req)

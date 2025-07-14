@@ -16,6 +16,9 @@ namespace Acmebot.Provider.Infobloxv2
 
         public Delete(InfobloxClient client) => _client = client;
 
+        /// <summary>
+        /// Azure Function: Elimina registro TXT (KeyVault-Acmebot).
+        /// </summary>
         [Function("Delete")]
         public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "delete")] HttpRequestData req)

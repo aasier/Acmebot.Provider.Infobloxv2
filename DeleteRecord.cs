@@ -15,6 +15,9 @@ namespace Acmebot.Provider.Infobloxv2
 
         public DeleteRecord(InfobloxClient client) => _client = client;
 
+        /// <summary>
+        /// Azure Function: Elimina registro TXT por zona y nombre.
+        /// </summary>
         [Function("DeleteRecord")]
         public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "zones/{zoneId}/records/{recordName}")] HttpRequestData req,
