@@ -5,6 +5,8 @@ using Microsoft.Azure.Functions.Worker.Http;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Text;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 
 namespace Acmebot.Provider.Infoblox
 {
@@ -16,6 +18,7 @@ namespace Acmebot.Provider.Infoblox
 
         /// <summary>
         /// Azure Function: Health check, verifica conectividad con Infoblox, lista dominios y prueba crear/borrar un registro TXT.
+        /// Además, muestra los servidores DNS del sistema donde corre la función.
         /// </summary>
         [Function("Health")]
         public async Task<HttpResponseData> Run(
@@ -25,6 +28,16 @@ namespace Acmebot.Provider.Infoblox
             var sb = new StringBuilder();
             try
             {
+                // Mostrar los servidores DNS del sistema
+                var dnsServers = NetworkInterface.GetAllNetworkInterfaces()
+                    .Where(i => i.OperationalStatus == OperationalStatus.Up)
+                    .SelectMany(i => i.GetIPProperties().DnsAddresses)
+                    .Where(a => a.AddressFamily == AddressFamily.InterNetwork || a.AddressFamily == AddressFamily.InterNetworkV6)
+                    .Select(a => a.ToString())
+                    .Distinct()
+                    .ToArray();
+                sb.AppendLine($"system DNS servers: {(dnsServers.Length > 0 ? string.Join(", ", dnsServers) : "(none)")}");
+
                 // Paso 1: Conexión y listado de zonas
                 var zones = await _client.GetZonesAsync();
                 if (zones.Count == 0)
