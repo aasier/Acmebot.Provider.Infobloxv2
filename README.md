@@ -111,8 +111,25 @@ curl -X GET "https://<functionapp-name>.azurewebsites.net/api/zones" -H "x-funct
 ```
 
 ---
+#### Health Check Example
+
+```sh
+curl -H "x-functions-key: <your-key>" "http://localhost:7071/api/health"
+```
+
+**Sample successful response:**
+```
+system DNS servers: 8.8.8.8, 8.8.4.4
+connected to Infoblox OK
+created register OK
+deleted register OK
+```
+
+If an error occurs, the response and HTTP status will reflect the failure step.
 
 ## KeyVault-Acmebot configuration
+
+Configure your KeyVault-Acmebot to use this custom DNS provider:
 
 ```json
 {
@@ -121,15 +138,14 @@ curl -X GET "https://<functionapp-name>.azurewebsites.net/api/zones" -H "x-funct
 }
 ```
 
-#### Health Check Example
-```sh
-curl -X GET "http://localhost:7071/api/health"
-```
-**Sample response:**
+The Acmebot will call the `/add` and `/delete` endpoints using POST with a JSON body similar to:
+
 ```json
 {
-  "status": "Healthy",
-  "timestamp": "2025-08-08T19:41:32Z"
+  "type": "TXT",
+  "name": "_acme-challenge.example.com",
+  "values": ["abcdefg"],
+  "ttl": 60
 }
 ```
 
