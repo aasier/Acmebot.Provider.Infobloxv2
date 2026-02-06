@@ -1,7 +1,7 @@
 ---
 name: SecurityReportAgent
 description: Security Report Agent - Analyzes TypeScript and React code for security vulnerabilities and creates security reports
-model: GPT-5.1 (Preview)
+model: GPT-5.1
 ---
 
 ## Purpose

@@ -39,7 +39,7 @@ jobs:
           PROMPT+="- Repository: $GITHUB_REPOSITORY"
           PROMPT+=$'\n\nTask:\n'
           PROMPT+=$"\n- Execute the instructions on the full codebase"
-          PROMPT+=$'\n- Generate the security report at /security-reports/security-assessment-report.md'
+          PROMPT+=$'\n- Generate the security report at repository level in ./security-reports/security-assessment-report.md'
 
           # Execute Copilot
           # We use < /dev/null to prevent the CLI from waiting for interactive input
