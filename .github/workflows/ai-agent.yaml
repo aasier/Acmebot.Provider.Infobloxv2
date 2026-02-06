@@ -40,7 +40,7 @@ jobs:
           PROMPT+=$'\n\nTask:\n'
           PROMPT+=$"\n- Execute the instructions on the full codebase"
           PROMPT+=$'\n- Generate the security report at repository level in ./security-reports/security-assessment-report.md'
-          PROMPT+=$'\n- Open a Github Issue with the security report'
+          PROMPT+=$'\n- Create a Github Issue with the security report'
 
           # Execute Copilot
           # We use < /dev/null to prevent the CLI from waiting for interactive input
