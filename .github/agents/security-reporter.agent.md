@@ -98,6 +98,9 @@ This agent can perform comprehensive security analysis across the full stack:
 - Recommendation: How to fix it
 - References: OWASP/CWE/Microsoft docs
 
+  If findings exist:
+- Create a GitHub issue with title & description.
+
 3. Security Best Practices Review
 
 - Areas following best practices
